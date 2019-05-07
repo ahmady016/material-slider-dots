@@ -3,17 +3,19 @@ import addExtensions from './extensions'
 import './app.css'
 
 addExtensions()
-
-const sliderLength = 10
+let start, end
+const sliderLength = 5
 const slides = Array.random({ count: sliderLength, stringOps: { len: 6, base: '0123456789ABCDF' } })
 
-const doSlide = (newPos, currentPos, setCurrentPos, setCurrentDir) => e => {
-  setCurrentDir(newPos > currentPos ? 'right' : 'left')
+const doSlide = (start, end, newPos, currentPos, setCurrentPos, setCurrentDir) => e => {
+  setCurrentDir(newPos > currentPos ? end : start)
   setCurrentPos(newPos)
 }
 
 const renderItems = (
   type,
+  start,
+  end,
   currentPos = 0,
   setCurrentPos = v => v,
   setCurrentDir = v => v
@@ -23,8 +25,7 @@ const renderItems = (
       <span
         key={i + 1}
         className='slider__dot'
-        data-pos={i}
-        onClick={doSlide(i, currentPos, setCurrentPos, setCurrentDir)}
+        onClick={doSlide(start, end, i, currentPos, setCurrentPos, setCurrentDir)}
       />
     ) : (
       <div
@@ -41,17 +42,21 @@ const renderItems = (
   })
 }
 
-function App () {
+function App ({ dir = 'rtl' }) {
+  start = (dir === 'rtl') ? 'right' : 'left'
+  end = (dir === 'rtl') ? 'left' : 'right'
   const [currentPos, setCurrentPos] = React.useState(0)
-  const [currentDir, setCurrentDir] = React.useState('left')
+  const [currentDir, setCurrentDir] = React.useState(start)
   return (
-    <div className='center'>
+    <div className='center' style={{ direction: dir }}>
       <div className='slider'>
         <div
           className='slider__slides'
           style={{
             width: `${sliderLength * 100}%`,
-            transform: `translateX(-${currentPos * (100 / sliderLength)}%)`
+            transform: (dir === 'rtl')
+              ? `translateX(${(sliderLength - 1 - currentPos) * (100 / sliderLength)}%)`
+              : `translateX(-${currentPos * (100 / sliderLength)}%)`
           }}
         >
           {renderItems('slides', currentPos)}
@@ -60,11 +65,11 @@ function App () {
           <span
             className={`slider__indicator slider__indicator--${currentDir}`}
             style={{
-              right: `${(sliderLength - 1) * 2 - currentPos * 2}rem`,
-              left: `${currentPos * 2}rem`
+              [start]: `${currentPos * 2}rem`,
+              [end]: `${(sliderLength - 1) * 2 - currentPos * 2}rem`
             }}
           />
-          {renderItems('dots', currentPos, setCurrentPos, setCurrentDir)}
+          {renderItems('dots', start, end, currentPos, setCurrentPos, setCurrentDir)}
         </div>
       </div>
     </div>
