@@ -3,13 +3,21 @@ import addExtensions from './extensions'
 import './app.css'
 
 addExtensions()
-let start, end
+let start, end, _newPos
 const sliderLength = 5
 const slides = Array.random({ count: sliderLength, stringOps: { len: 6, base: '0123456789ABCDF' } })
 
 const doSlide = (start, end, newPos, currentPos, setCurrentPos, setCurrentDir) => e => {
   setCurrentDir(newPos > currentPos ? end : start)
   setCurrentPos(newPos)
+}
+
+const moveSlider = (sliderDir, buttonDir, currentPos, setCurrentPos, setCurrentDir, start, end) => (e) => {
+  if ( (buttonDir === 'backward' && sliderDir === 'ltr') || (buttonDir === 'forward' && sliderDir === 'rtl') )
+    _newPos = ((currentPos-1) < 0) ? sliderLength-1 : currentPos-1
+  else if ( (buttonDir === 'forward' && sliderDir === 'ltr') || (buttonDir === 'backward' && sliderDir === 'rtl') )
+    _newPos = ((currentPos+1) === sliderLength) ? 0 : currentPos+1
+  doSlide(start, end, _newPos, currentPos, setCurrentPos, setCurrentDir)()
 }
 
 const renderItems = (
@@ -70,6 +78,10 @@ function App ({ dir = 'rtl' }) {
             }}
           />
           {renderItems('dots', start, end, currentPos, setCurrentPos, setCurrentDir)}
+        </div>
+        <div className='slider-buttons' style={{ flexDirection: (dir === 'rtl')? 'row-reverse' : 'row' }}>
+          <i class='material-icons backward'  onClick={moveSlider(dir, 'backward', currentPos, setCurrentPos, setCurrentDir, start, end)}>arrow_back_ios</i>
+          <i class='material-icons forward'   onClick={moveSlider(dir, 'forward', currentPos, setCurrentPos, setCurrentDir, start, end)}>arrow_forward_ios</i>
         </div>
       </div>
     </div>

@@ -57,3 +57,20 @@
 .slider__indicator--right {
   transition: left 0.3s 0.1s cubic-bezier(0.51, 0.92, 0.24, 1.15), right 0.3s cubic-bezier(0.51, 0.92, 0.24, 1.15);
 }
+.slider-buttons {
+  width: 100%;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  z-index: 100;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+i.material-icons.forward,
+i.material-icons.backward {
+  cursor: pointer;
+  font-size: 3.5rem;
+  color: #fff;
+}
