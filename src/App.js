@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import addExtensions from './extensions'
-import './app.css'
 
 addExtensions()
 let start, end, _newPos, slides
